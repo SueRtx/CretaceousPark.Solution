@@ -9,6 +9,7 @@ using CretaceousPark.Models;
 
 namespace CretaceousPark.Controllers
 {
+  [Produces("application/json")]
   [Route("api/[controller]")]
   [ApiController]
   public class AnimalsController : ControllerBase
@@ -20,31 +21,62 @@ namespace CretaceousPark.Controllers
       _db = db;
     }
 
-    // GET: api/Animals
+
+    /// <summary>
+    /// Animal List
+    /// </summary>
+    /// <remarks>
+    ///
+    /// Sample request:
+    /// GET /api/animals
+    ///     
+    /// </remarks>
+    /// 
+    /// <returns>Animal List</returns>
+    /// <response code="200">Returns Animal List</response>
+    /// <response code="400">If the animal is null</response> 
+    
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
     [HttpGet]
-public async Task<List<Animal>> Get(string species, string name, int minimumAge)
-{
-  IQueryable<Animal> query = _db.Animals.AsQueryable();
+    public async Task<List<Animal>> Get(string species, string name, int minimumAge)
+    {
+      IQueryable<Animal> query = _db.Animals.AsQueryable();
 
-  if (species != null)
-  {
-    query = query.Where(entry => entry.Species == species);
-  }
+      if (species != null)
+      {
+        query = query.Where(entry => entry.Species == species);
+      }
 
-  if (name != null)
-  {
-    query = query.Where(entry => entry.Name == name);
-  }
+      if (name != null)
+      {
+        query = query.Where(entry => entry.Name == name);
+      }
 
-  if (minimumAge > 0)
-  {
-    query = query.Where(entry => entry.Age >= minimumAge);
-  }
+      if (minimumAge > 0)
+      {
+        query = query.Where(entry => entry.Age >= minimumAge);
+      }
 
-  return await query.ToListAsync();
-}
+      return await query.ToListAsync();
+    }
 
-    // GET: api/Animals/5
+    
+    /// <summary>
+    /// Return individual animal base by Id
+    /// </summary>
+    /// <remarks>
+    ///
+    /// Sample request:
+    /// GET /api/animals/1
+    ///     
+    /// </remarks>
+    /// 
+    /// <returns>Return animal base by Id</returns>
+    /// <response code="200">Returns Animal</response>
+    /// <response code="400">If the animal is null</response> 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
     [HttpGet("{id}")]
     public async Task<ActionResult<Animal>> GetAnimal(int id)
     {
@@ -58,8 +90,22 @@ public async Task<List<Animal>> Get(string species, string name, int minimumAge)
         return animal;
     }
 
-    // PUT: api/Animals/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+    /// <summary>
+    /// Update Animal 
+    /// </summary>
+    /// <remarks>
+    ///
+    /// Sample request:
+    /// DELETE /api/animals/1 
+    ///     
+    /// </remarks>
+    /// 
+    /// <returns>Delete animal in API</returns>
+    /// <response code="201">Animal Deleted Successfully</response>
+    /// <response code="400">If the animal is null</response> 
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesDefaultResponseType]
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, Animal animal)
     {
@@ -89,8 +135,29 @@ public async Task<List<Animal>> Get(string species, string name, int minimumAge)
       return NoContent();
     }
 
-    // POST: api/Animals
+
+    /// <summary>
+    /// Creates animal.
+    /// </summary>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     POST /Todo
+    ///     {
+    ///        "id": 1,
+    ///        "name": "Animal1",
+    ///        "Species": "Species1"
+    ///     }
+    ///
+    /// </remarks>
+    /// 
+    /// <returns>A newly created Animal</returns>
+    /// <response code="201">Returns the newly created animal</response>
+    /// <response code="400">If the animal is null</response> 
+    
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Animal>> Post(Animal animal)
     {
       _db.Animals.Add(animal);
@@ -99,7 +166,20 @@ public async Task<List<Animal>> Get(string species, string name, int minimumAge)
       return CreatedAtAction(nameof(GetAnimal), new { id = animal.AnimalId }, animal);
     }
 
-    // DELETE: api/Animals/5
+
+
+    /// <summary>
+    /// Delete Animal 
+    /// </summary>
+    /// <remarks>
+    ///
+    /// 
+    ///     
+    /// </remarks>
+    /// 
+    /// <returns>Animal List</returns>
+    /// <response code="201">Animal Updated successfully</response>
+    /// <response code="400">If the animal is null</response>    
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAnimal(int id)
     {
